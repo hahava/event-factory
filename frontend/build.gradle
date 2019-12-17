@@ -1,0 +1,18 @@
+plugins {
+    id("com.github.node-gradle.node") version "2.2.0"
+}
+
+node {
+    download = true
+    version = "12.9.1"
+    npmVersion = "6.10.3"
+}
+
+task webpack(dependsOn: "npmInstall", type: NodeTask) {
+    script = file("node_modules/webpack/bin/webpack.js")
+}
+
+task watch(type: NodeTask) {
+    script = file("node_modules/webpack/bin/webpack.js")
+    args = ["-w"]
+}

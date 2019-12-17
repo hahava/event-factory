@@ -1,0 +1,16 @@
+allprojects {
+    apply plugin: "idea"
+    version = "0.0.1"
+
+    idea {
+        module {
+            outputDir file("build/classes/main")
+            testOutputDir file("build/classes/test")
+        }
+    }
+
+    if (project.convention.findPlugin(JavaPluginConvention)) {
+        sourceSets.main.java.outputDir = new File(buildDir, "classes/main")
+        sourceSets.test.java.outputDir = new File(buildDir, "classes/test")
+    }
+}
