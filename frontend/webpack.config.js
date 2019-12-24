@@ -12,7 +12,7 @@ module.exports = function() {
 
     const webpackConfig = {
         mode: productionBuild ? 'production' : 'development',
-        entry: { 'app': './src/js/main.js'},
+        entry: { 'app': './src/js/main.tsx'},
         output: {
             path: outputDir,
             publicPath: '/',
@@ -20,6 +20,7 @@ module.exports = function() {
             chunkFilename: './js/[name].bundle.js'
         },
         resolve: {
+            extensions: [".ts", ".tsx", ".js", ".jsx"],
             modules: [
                 path.join(__dirname, '../backend/src/main/resources'),
                 path.join(__dirname, './src/js'),
@@ -30,12 +31,17 @@ module.exports = function() {
         module: {
             rules: [
                 {
-                    test: /\.jsx?$/,
+                    test: /\.tsx?$/,
                     exclude: /(node_modules)/,
                     use: [
-                        { loader: 'babel-loader', options: { presets: ['@babel/preset-react'] } },
+                        { loader: 'ts-loader' },
                     ],
                 },
+                {
+                    enforce: "pre",
+                    test: /\.js$/,
+                    loader: "source-map-loader"
+                }
             ],
         },
         plugins: [
@@ -49,6 +55,7 @@ module.exports = function() {
                     context: 'src/js',
                     from: '*',
                     to: 'js',
+                    ignore: ['main.tsx'],
                 },
                 {
                     context: 'src/css',
