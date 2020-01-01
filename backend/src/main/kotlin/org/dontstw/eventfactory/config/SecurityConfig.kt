@@ -21,13 +21,13 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .deleteCookies()
 
         // default auth
-        http!!
+        http
                 .authorizeRequests()
                 .antMatchers("/api/**")
                 .permitAll()
 
-        http!!.formLogin()
-        http!!.csrf().disable()
+        http.formLogin()
+        http.csrf().disable()
     }
 
     //TODO: It use memory auth but Should be replaced using jdbc.
