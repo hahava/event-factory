@@ -1,5 +1,19 @@
-allprojects {
+allprojects  {
     apply plugin: "idea"
+
     group = "org.dontstw"
     version = "0.0.1-SNAPSHOT"
+
+    idea {
+        module {
+            outputDir file("build/classes/main")
+            testOutputDir file("build/classes/test")
+        }
+    }
+
+    if (project.convention.findPlugin(JavaPluginConvention)) {
+        // Change the output directory for the main and test source sets back to the old path
+        sourceSets.main.java.outputDir = new File(buildDir, "classes/main")
+        sourceSets.test.java.outputDir = new File(buildDir, "classes/test")
+    }
 }

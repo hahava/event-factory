@@ -4,7 +4,7 @@ const argv = require('yargs').argv;
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const productionBuild = argv.p || false;
-const outputDir = path.resolve('../backend/build/resources/main/static');
+const outputDir = path.resolve('../backend/build/classes/main/static');
 
 module.exports = function() {
     const version = '0.0.1';

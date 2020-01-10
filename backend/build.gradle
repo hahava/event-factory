@@ -9,6 +9,8 @@ plugins {
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
+sourceSets.main.output.resourcesDir = sourceSets.main.java.outputDir
+
 repositories {
     mavenCentral()
 }
@@ -37,6 +39,12 @@ test {
 
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+bootWar {
+    requiresUnpack "**/*.jar"
+    sourceSets.main.java.outputDir = new File(buildDir, "classes/main")
+    sourceSets.test.java.outputDir = new File(buildDir, "classes/test")
 }
 
 tasks.processResources.dependsOn tasks.getByPath(":frontend:webpack")
