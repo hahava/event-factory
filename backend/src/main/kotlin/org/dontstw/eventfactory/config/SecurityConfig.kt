@@ -1,38 +1,48 @@
 package org.dontstw.eventfactory.config
 
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
-import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.Customizer.withDefaults
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
+import org.springframework.security.config.web.server.ServerHttpSecurity
+import org.springframework.security.config.web.server.ServerHttpSecurity.AuthorizeExchangeSpec
+import org.springframework.security.core.userdetails.MapReactiveUserDetailsService
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.web.server.SecurityWebFilterChain
 
-@EnableWebSecurity
-class SecurityConfig : WebSecurityConfigurerAdapter() {
 
-    override fun configure(http: HttpSecurity?) {
-        // admin auth
-        http!!
-                .authorizeRequests()
-                .antMatchers("/admin/**")
-                .hasRole("ADMIN")
-                .and()
-                .logout()
-                .logoutUrl("/admin/logout")
-                .invalidateHttpSession(true)
-                .deleteCookies()
+@Configuration
+@EnableWebFluxSecurity
+class SecurityConfig {
 
-        // default auth
-        http!!
-                .authorizeRequests()
-                .antMatchers("/api/**")
-                .permitAll()
+    @Bean
+    fun userDetailsService(): MapReactiveUserDetailsService? {
+        val user: UserDetails = User.withDefaultPasswordEncoder()
+                .username("user")
+                .password("user")
+                .roles("USER")
+                .build()
 
-        http!!.formLogin()
-        http!!.csrf().disable()
+        val admin: UserDetails = User.withDefaultPasswordEncoder()
+                .username("admin")
+                .password("admin")
+                .roles("ADMIN")
+                .build()
+        return MapReactiveUserDetailsService(user, admin)
     }
 
-    //TODO: It use memory auth but Should be replaced using jdbc.
-    override fun configure(auth: AuthenticationManagerBuilder?) {
-        // {noop} is meaning password not encoded
-        auth!!.inMemoryAuthentication().withUser("admin").password("{noop}1234").roles("ADMIN")
+    @Bean
+    fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain? {
+        http
+                .authorizeExchange { exchanges: AuthorizeExchangeSpec ->
+                    exchanges.pathMatchers("/admin/**").hasRole("ADMIN")
+                            .pathMatchers("/api/**").permitAll()
+                            .anyExchange().authenticated()
+
+                }
+                .httpBasic(withDefaults())
+                .formLogin(withDefaults())
+        return http.build()
     }
 }
