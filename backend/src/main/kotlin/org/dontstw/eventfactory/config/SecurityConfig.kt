@@ -26,8 +26,15 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .antMatchers("/api/**")
                 .permitAll()
 
+        http!!
+                .authorizeRequests()
+                .antMatchers("/h2-console/*")
+                .permitAll()
+
         http!!.formLogin()
         http!!.csrf().disable()
+        http!!.headers().frameOptions().disable()
+
     }
 
     //TODO: It use memory auth but Should be replaced using jdbc.
