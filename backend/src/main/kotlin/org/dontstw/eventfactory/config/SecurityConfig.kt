@@ -1,12 +1,20 @@
 package org.dontstw.eventfactory.config
 
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
+import javax.sql.DataSource
 
 @EnableWebSecurity
 class SecurityConfig : WebSecurityConfigurerAdapter() {
+
+    @Autowired
+    private lateinit var dataSource: DataSource
 
     override fun configure(http: HttpSecurity?) {
         // admin auth
@@ -37,9 +45,13 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     }
 
-    //TODO: It use memory auth but Should be replaced using jdbc.
     override fun configure(auth: AuthenticationManagerBuilder?) {
-        // {noop} is meaning password not encoded
-        auth!!.inMemoryAuthentication().withUser("admin").password("{noop}1234").roles("ADMIN")
+        auth!!
+                .jdbcAuthentication()
+                .dataSource(dataSource)
+                .passwordEncoder(passWordEncoder())
     }
+
+    @Bean
+    fun passWordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 }
