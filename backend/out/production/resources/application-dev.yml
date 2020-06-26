@@ -8,11 +8,11 @@ spring:
     username: sa
     password: password
     platform: dev
+  thymeleaf:
+    prefix: classpath:templates/
+    suffix: .html
+    mode: HTML5
   h2:
     console:
       enabled: true
       path: /h2-console
-  jpa:
-    generate-ddl: true
-    hibernate:
-      ddl-auto: create-drop
