@@ -11,7 +11,7 @@ data class Member(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "MEMBER_ID")
-        val id: Long,
+        val id: Long? = null,
 
         @Column(name = "MEMBER_ROLE")
         @Enumerated(EnumType.STRING)
@@ -27,8 +27,8 @@ data class Member(
         var email: String,
 
         @CreationTimestamp
-        var createdTime: LocalDateTime,
+        var createdTime: LocalDateTime? = null,
 
         @UpdateTimestamp
-        var updateTime: LocalDateTime
+        var updateTime: LocalDateTime? = null
 )
